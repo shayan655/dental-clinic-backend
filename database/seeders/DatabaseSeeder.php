@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\Role;
+use App\Models\Patient;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -31,12 +32,30 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($accounts as [$name, $email, $role]) {
-            User::forceCreate([
+            $user = User::forceCreate([
                 'name' => $name,
                 'email' => $email,
                 'password' => 'password',
                 'role' => $role,
                 'is_active' => true
+            ]);
+
+            if ($role == Role::Patient) {
+                $user->patient()->create([
+                    'name' => $name,
+                    'email' => $email,
+                    'phone' => '+989111111111',
+                    'date_of_birth' => '2006-01-01',
+                ]);
+            }
+        }
+
+        foreach ([['Anna Visser', 'anna@example.com'], ['Tom Bakker', 'tom@example.com']] as [$name, $email]) {
+            Patient::create([
+                'name' => $name,
+                'email' => $email,
+                'phone' => '+31 6 8765 4321',
+                'date_of_birth' => '1985-09-30',
             ]);
         }
     }
