@@ -38,4 +38,8 @@ class User extends Authenticatable
     public function patient(): HasOne {
         return $this->hasOne(Patient::class);
     }
+
+    public function hasRole(Role ...$roles): bool {
+        return in_array($this->role, $roles, true);
+    }
 }
