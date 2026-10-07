@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             ['Dr. Doctor', 'doctor@clinic.test', Role::Doctor],
             ['Reception Desk', 'reception@clinic.test', Role::Receptionist],
             ['Test Patient', 'patient@clinic.test', Role::Patient],
+            ['Dr. Sophie Jansen', 'doctor2@clinic.test', Role::Doctor],
         ];
 
         foreach ($accounts as [$name, $email, $role]) {
