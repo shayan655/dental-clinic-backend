@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\Role;
+use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\Service;
 use App\Models\User;
@@ -76,6 +77,28 @@ class DatabaseSeeder extends Seeder
                 'description' => $description,
                 'duration_minutes' => $minutes,
                 'price' => $price,
+            ]);
+        }
+
+        $doctor1 = User::where('email', 'doctor@clinic.test')->first();
+        $doctor2 = User::where('email', 'doctor2@clinic.test')->first();
+        $checkup = Service::where('name', 'Checkup')->first();
+        $cleaning = Service::where('name', 'Cleaning')->first();
+
+        $rows = [
+            ['patient@clinic.test', $doctor1, $checkup, now()->addDays(2)->setTime(10, 0), 'confirmed'],
+            ['anna@example.com', $doctor1, $cleaning, now()->subDays(10)->setTime(9, 0), 'completed'],
+            ['tom@example.com', $doctor2, $checkup, now()->addDays(3)->setTime(14, 0), 'pending'],
+        ];
+
+        foreach ($rows as [$email, $doctor, $service, $when, $status]) {
+            Appointment::create([
+                'patient_id' => Patient::where('email', $email)->value('id'),
+                'doctor_id' => $doctor->id,
+                'service_id' => $service->id,
+                'duration_minutes' => $service->duration_minutes,
+                'status' => $status,
+                'scheduled_at' => $when,
             ]);
         }
     }
