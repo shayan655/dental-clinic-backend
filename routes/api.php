@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DoctorController;
+use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\SettingController;
 use Illuminate\Http\Request;
@@ -20,4 +21,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/settings', [SettingController::class, 'update']);
     Route::put('/settings/hours', [SettingController::class, 'updateHours']);
     Route::get('/doctors', [DoctorController::class, 'index']);
+    Route::apiResource('patients', PatientController::class)->except(['destroy']);
 });
