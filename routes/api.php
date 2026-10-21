@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AvailabilityController;
 use App\Http\Controllers\Api\DoctorController;
+use App\Http\Controllers\Api\MedicalRecordController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\SettingController;
@@ -26,4 +27,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('patients', PatientController::class)->except(['destroy']);
     Route::get('/availability', AvailabilityController::class);
     Route::apiResource('appointments', AppointmentController::class)->except(['destroy']);
+    Route::apiResource('patients.records', MedicalRecordController::class)->only(['index', 'store', 'update']);
 });

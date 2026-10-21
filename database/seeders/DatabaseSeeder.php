@@ -101,5 +101,23 @@ class DatabaseSeeder extends Seeder
                 'scheduled_at' => $when,
             ]);
         }
+
+        $anna = Patient::where('email', 'anna@example.com')->first();
+        $testPatient = Patient::where('email', 'patient@clinic.test')->first();
+
+        $anna->medical_records()->create([
+            'doctor_id' => $doctor1->id,
+            'appointment_id' => Appointment::where('patient_id', $anna->id)->value('id'),
+            'diagnosis' => 'Mild gingivitis with early-stage plaque buildup.',
+            'treatment' => 'Professional cleaning performed. Scaling and polishing completed.',
+            'prescription' => 'Chlorhexidine mouthwash 0.12%, twice daily for 2 weeks.',
+            'notes' => 'Advised to improve flossing technique. Follow-up in 6 months.',
+        ]);
+
+        $testPatient->medical_records()->create([
+            'doctor_id' => $doctor1->id,
+            'diagnosis' => 'Routine checkup, no issues found.',
+            'treatment' => 'Examination and X-rays taken. No cavities detected.',
+        ]);
     }
 }

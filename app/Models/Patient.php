@@ -29,6 +29,10 @@ class Patient extends Model
         return $this->hasMany(Appointment::class);
     }
 
+    public function medical_records(): HasMany {
+        return $this->hasMany(MedicalRecord::class);
+    }
+
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
         return match (true) {
