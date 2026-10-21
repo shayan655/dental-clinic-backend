@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\AvailabilityController;
 use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\ServiceController;
@@ -22,4 +24,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/settings/hours', [SettingController::class, 'updateHours']);
     Route::get('/doctors', [DoctorController::class, 'index']);
     Route::apiResource('patients', PatientController::class)->except(['destroy']);
+    Route::get('/availability', AvailabilityController::class);
+    Route::apiResource('appointments', AppointmentController::class)->except(['destroy']);
 });

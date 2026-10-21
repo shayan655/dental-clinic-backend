@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\AppointmentStatus;
+use App\Enums\Role;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Override;
@@ -19,6 +22,7 @@ class Appointment extends Model
         return [
             'scheduled_at' => 'datetime',
             'duration_minutes' => 'integer',
+            'status' => AppointmentStatus::class,
         ];
     }
 
@@ -35,5 +39,14 @@ class Appointment extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class)->withTrashed();
+    }
+
+    public function scopeVisibleTo(Builder $query, User $user): Builder
+    {
+        return match (true) {
+            $user->hasRole(Role::SuperAdmin, Role::ClinicManager, Role::Receptionist) => $query,
+            $user->hasRole(Role::Doctor) => $query->where('doctor_id', $user->id),
+            default => $query->whereHas('patient', fn (Builder $q) => $q->where('user_id', $user->id)),
+        };
     }
 }
