@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Enums\InvoiceStatus;
 use App\Enums\Role;
 use App\Models\Appointment;
+use App\Models\Invoice;
 use App\Models\Patient;
 use App\Models\Service;
 use App\Models\User;
@@ -119,5 +121,21 @@ class DatabaseSeeder extends Seeder
             'diagnosis' => 'Routine checkup, no issues found.',
             'treatment' => 'Examination and X-rays taken. No cavities detected.',
         ]);
-    }
+
+        $anna = Patient::where('email', 'anna@example.com')->first();
+        $tom = Patient::where('email', 'tom@example.com')->first();
+        $testPatient = Patient::where('email', 'patient@clinic.test')->first();
+
+        Invoice::create([
+            'patient_id' => $anna->id,
+            'appointment_id' => Appointment::where('patient_id', $anna->id)->value('id'),
+            'amount' => 80,
+            'status' => InvoiceStatus::Paid,
+            'issued_at' => now()->subDays(10),
+            'paid_at' => now()->subDays(10),
+        ]);
+
+        Invoice::create(['patient_id' => $tom->id, 'amount' => 120, 'status' => InvoiceStatus::Pending, 'issued_at' => now()->subDays(2)]);
+        Invoice::create(['patient_id' => $testPatient->id, 'amount' => 60, 'status' => InvoiceStatus::Pending, 'issued_at' => now()->subDay()]);
+            }
 }

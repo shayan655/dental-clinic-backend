@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Enums\AppointmentStatus;
+use App\Enums\InvoiceStatus;
 use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAppointmentRequest;
 use App\Http\Requests\UpdateAppointmentRequest;
 use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
+use App\Models\Invoice;
 use App\Models\Patient;
 use App\Models\Service;
 use App\Models\User;
@@ -124,6 +126,19 @@ class AppointmentController extends Controller
             }
 
             $appointment->update($changes);
+
+            // A finished treatment is billed automatically (once per appointment)
+            if (($changes['status'] ?? null) === AppointmentStatus::Completed->value) {
+                Invoice::firstOrCreate(
+                    ['appointment_id' => $appointment->id],
+                    [
+                        'patient_id' => $appointment->patient_id,
+                        'amount' => $appointment->service()->value('price'),
+                        'status' => InvoiceStatus::Pending,
+                        'issued_at' => now(),
+                    ]
+                );
+            }
         });
 
         return new AppointmentResource($appointment->refresh()->load(self::RELATIONS));
