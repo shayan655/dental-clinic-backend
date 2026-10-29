@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\MedicalRecordController;
 use App\Http\Controllers\Api\PatientController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\SettingController;
+use App\Http\Controllers\Api\StaffController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,4 +31,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('appointments', AppointmentController::class)->except(['destroy']);
     Route::apiResource('patients.records', MedicalRecordController::class)->only(['index', 'store', 'update']);
     Route::apiResource('invoices', InvoiceController::class)->only(['index', 'store', 'update']);
+    Route::apiResource('staff', StaffController::class)->except(['show']);
 });
