@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\MedicalRecordController;
 use App\Http\Controllers\Api\PatientController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\StaffController;
@@ -32,4 +33,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('patients.records', MedicalRecordController::class)->only(['index', 'store', 'update']);
     Route::apiResource('invoices', InvoiceController::class)->only(['index', 'store', 'update']);
     Route::apiResource('staff', StaffController::class)->except(['show']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->middleware('throttle:6,1');
 });
