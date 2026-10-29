@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role,
             'patient_id' => $this->role === Role::Patient ? $this->patient?->id : null,
+            'is_active' => $this->is_active,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
