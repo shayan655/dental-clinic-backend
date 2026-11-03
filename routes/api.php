@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AvailabilityController;
+use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\MedicalRecordController;
@@ -19,6 +21,7 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('throt
 Route::get('/services', [ServiceController::class, 'index']);
 Route::get('/settings', [SettingController::class, 'show']);
 Route::get('/settings/hours', [SettingController::class, 'hours']);
+Route::post('contact', [ContactController::class, 'store'])->middleware('throttle:5,10');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
@@ -35,4 +38,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('staff', StaffController::class)->except(['show']);
     Route::put('/profile', [ProfileController::class, 'update']);
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->middleware('throttle:6,1');
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/manager', [DashboardController::class, 'manager']);
+        Route::get('/doctor', [DashboardController::class, 'doctor']);
+        Route::get('/receptionist', [DashboardController::class, 'receptionist']);
+        Route::get('/patient', [DashboardController::class, 'patient']);
+    });
 });

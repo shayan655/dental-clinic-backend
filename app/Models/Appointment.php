@@ -7,6 +7,7 @@ use App\Enums\Role;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Override;
 
 class Appointment extends Model
@@ -48,5 +49,9 @@ class Appointment extends Model
             $user->hasRole(Role::Doctor) => $query->where('doctor_id', $user->id),
             default => $query->whereHas('patient', fn (Builder $q) => $q->where('user_id', $user->id)),
         };
+    }
+
+    public function medicalRecord(): HasOne {
+        return $this->hasOne(MedicalRecord::class)->latestOfMany();
     }
 }
