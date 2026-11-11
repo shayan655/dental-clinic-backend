@@ -18,12 +18,12 @@ class MedicalRecordController extends Controller
         Gate::authorize('viewAny', [MedicalRecord::class, $patient]);
 
         return MedicalRecordResource::collection(
-            $patient->medical_records()->orderByDesc('created_at')->orderByDesc('id')->get()
+            $patient->medicalRecords()->orderByDesc('created_at')->orderByDesc('id')->get()
         );
     }
 
     public function store(StoreMedicalRecordRequest $request, Patient $patient): JsonResponse {
-        $record = $patient->medical_records()->create([
+        $record = $patient->medicalRecords()->create([
             ...$request->validated(),
             'doctor_id' => $request->user()->id,
         ]);
