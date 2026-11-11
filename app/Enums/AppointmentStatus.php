@@ -5,8 +5,8 @@ namespace App\Enums;
 enum AppointmentStatus: string {
      case Pending = 'pending';
      case Confirmed = 'confirmed';     
-     case InProgress = 'inProgress';     
-     case Completed = 'completed';     
+     case InProgress = 'in_progress';     
+     case Completed = 'completed';
      case Cancelled = 'cancelled';
 
      public function isLocked(): bool {
