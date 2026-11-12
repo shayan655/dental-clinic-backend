@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AvailabilityController;
 use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\ContactMessageController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DoctorController;
 use App\Http\Controllers\Api\InvoiceController;
@@ -45,4 +46,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/receptionist', [DashboardController::class, 'receptionist']);
         Route::get('/patient', [DashboardController::class, 'patient']);
     });
+    Route::get('/contact-messages', [ContactMessageController::class, 'index']);
+    Route::put('contact-messages/{contactMessage}', [ContactMessageController::class, 'update']);
+    Route::delete('contact-messages/{contactMessage}', [ContactMessageController::class, 'destroy']);
+    Route::get('/contact-messages/unread-count', [ContactMessageController::class, 'unreadCount']);
 });
