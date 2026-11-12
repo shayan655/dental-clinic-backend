@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use App\Enums\Role;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\ApiTestCase;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class PatientTest extends ApiTestCase
 {
@@ -100,5 +102,57 @@ class PatientTest extends ApiTestCase
         $this->postJson('/api/patients', ['date_of_birth' => '2999-01-01'] + $this->newPatient)
             ->assertUnprocessable()
             ->assertJsonValidationErrors('date_of_birth');
+    }
+
+    #[DataProvider('frontDeskRoles')]
+public function test_front_desk_roles_can_create_a_login_for_a_staff_created_patient(Role $role): void
+{
+    $patient = $this->patientFor(null, ['email' => 'anna@example.com']);
+    $this->actingAs($this->userWithRole($role));
+
+    $response = $this->postJson("/api/patients/{$patient->id}/account")->assertCreated();
+
+    $user = User::where('email', 'anna@example.com')->firstOrFail();
+    $password = $response->json('temporary_password');
+
+    $this->assertSame(Role::Patient, $user->role);
+    $this->assertTrue($user->is_active);
+    $this->assertSame($user->id, $patient->fresh()->user_id);
+    $this->assertSame($user->id, $response->json('data.user_id'));
+    $this->assertGreaterThanOrEqual(8, strlen($password));
+    $this->assertTrue(Hash::check($password, $user->password));
+}
+
+    #[DataProvider('nonFrontDeskRoles')]
+    public function test_doctors_and_patients_cannot_create_logins(Role $role): void
+    {
+        $patient = $this->patientFor();
+        $user = $role === Role::Patient ? $this->patientUser() : $this->userWithRole($role);
+        $this->actingAs($user);
+
+        $this->postJson("/api/patients/{$patient->id}/account")->assertForbidden();
+
+        $this->assertNull($patient->fresh()->user_id);
+    }
+
+    public function test_a_patient_who_already_has_a_login_cannot_get_a_second_one(): void
+    {
+        $account = $this->patientUser();
+        $this->actingAs($this->userWithRole(Role::Receptionist));
+
+        $this->postJson("/api/patients/{$account->patient->id}/account")->assertUnprocessable();
+    }
+
+    public function test_a_login_is_refused_when_the_email_belongs_to_another_account(): void
+    {
+        $this->userWithRole(Role::Doctor, ['email' => 'shared@example.com']);
+        $patient = $this->patientFor(null, ['email' => 'shared@example.com']);
+        $this->actingAs($this->userWithRole(Role::Receptionist));
+
+        $this->postJson("/api/patients/{$patient->id}/account")
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('email');
+
+        $this->assertNull($patient->fresh()->user_id);
     }
 }

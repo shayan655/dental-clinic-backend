@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/settings/hours', [SettingController::class, 'updateHours']);
     Route::get('/doctors', [DoctorController::class, 'index']);
     Route::apiResource('patients', PatientController::class)->except(['destroy']);
+    Route::post('/patients/{patient}/account', [PatientController::class, 'createAccount']);
     Route::get('/availability', AvailabilityController::class);
     Route::apiResource('appointments', AppointmentController::class)->except(['destroy']);
     Route::apiResource('patients.records', MedicalRecordController::class)->only(['index', 'store', 'update']);
